@@ -1,2 +1,29 @@
 ---
 moodle_enable_debug: false
+
+moodle_root_path: /var/www/moodle
+moodle_dataroot_path: /var/www/moodledata
+moodle_version: '3.3'
+moodle_root_user: root
+moodle_root_group: root
+moodle_root_permissions: '0755'
+moodle_dataroot_user: www-data
+moodle_dataroot_group: www-data
+moodle_dataroot_permissions: '0777'
+moodle_fullname: My Moodle website
+moodle_shortname: mymoodle
+moodle_wwwroot: https://examplemoodle.com
+
+moodle_database_name: moodle
+moodle_database_user: moodle
+moodle_database_password: secret
+
+moodle_database_host:
+moodle_database_port: '33060'
+moodle_database_prefix: app_
+
+moodle_admin_username: admin
+moodle_admin_password: P@ssw0rd
+moodle_admin_email: admin@example.com
+
+moodle_enable_debug: false
