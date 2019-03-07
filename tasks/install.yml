@@ -1,8 +1,8 @@
 ---
-- name: Installing base packages for moodle
+- name:         Installing base packages for moodle
   package:
-     name: "{{ item }}"
-     state: present
+     name:      "{{ item }}"
+     state:     present
   with_items:
     - apache2
     - mysql-client
@@ -18,71 +18,71 @@
     - php5-ldap
     - git-core
 
-- name: Starting apache on boot
-  service: name=apache2 enabled=yes state=started
+- name:         Starting apache on boot
+  service:      name=apache2 enabled=yes state=started
 
-- name: Check if Moodle downloaded
+- name:         Check if Moodle downloaded
   stat:
-    path: "{{ moodle_root_path }}/version.php"
-  register: moodle_downloaded
+    path:       "{{ moodle_root_path }}/version.php"
+  register:     moodle_downloaded
 
-- name: Check if Moodle installed
+- name:         Check if Moodle installed
   stat:
-    path: "{{ moodle_root_path }}/config.php"
-  register: moodle_installed
+    path:       "{{ moodle_root_path }}/config.php"
+  register:     moodle_installed
 
-- name: Check if moodledata folder exists
+- name:         Check if moodledata folder exists
   stat:
-    path: "{{ moodle_dataroot_path }}"
-  register: moodle_dataroot_created
+    path:       "{{ moodle_dataroot_path }}"
+  register:     moodle_dataroot_created
 
-- name: Download specfic Moodle version
+- name:         Download specfic Moodle version
   git:
-    repo: "{{ moodle_git_repository }}"
-    dest: "{{ moodle_root_path }}"
-    version: "MOODLE_{{ moodle_version.split('.')[0] }}{{ moodle_version.split('.')[1] }}_STABLE"
-    depth: "{{ moodle_git_depth }}"
-  register: moodle_cloned
+    repo:       "{{ moodle_git_repository }}"
+    dest:       "{{ moodle_root_path }}"
+    version:    "MOODLE_{{ moodle_version.split('.')[0] }}{{ moodle_version.split('.')[1] }}_STABLE"
+    depth:      "{{ moodle_git_depth }}"
+  register:     moodle_cloned
   when:
   - not moodle_downloaded.stat.exists
   - moodle_version is defined
 
-- name: Download latest Moodle version
+- name:         Download latest Moodle version
   git:
-    repo: "{{ moodle_git_repository }}"
-    dest: "{{ moodle_root_path }}"
-    depth: "{{ moodle_git_depth }}"
-  register: moodle_cloned
+    repo:       "{{ moodle_git_repository }}"
+    dest:       "{{ moodle_root_path }}"
+    depth:      "{{ moodle_git_depth }}"
+  register:     moodle_cloned
   when:
   - not moodle_downloaded.stat.exists
   - moodle_version is not defined
 
-- name: Secure Moodle directories and files
+- name:         Secure Moodle directories and files
   file:
-    path: "{{ moodle_root_path }}"
-    state: directory
-    recurse: yes
-    owner: "{{ moodle_root_user }}"
-    group: "{{ moodle_root_group }}"
-    mode: "{{ moodle_root_permissions }}"
-  when: moodle_cloned.changed
+    path:       "{{ moodle_root_path }}"
+    state:      directory
+    recurse:    yes
+    owner:      "{{ moodle_root_user }}"
+    group:      "{{ moodle_root_group }}"
+    mode:       "{{ moodle_root_permissions }}"
+  when:         moodle_cloned.changed
 
-- name: Secure Moodle regular files
-  shell: "find {{ moodle_root_path }} -type f -exec chmod 0644 {} \\;"
-  when: not moodle_installed.stat.exists
+- name:         Secure Moodle regular files
+  shell:        "find {{ moodle_root_path }} -type f -exec chmod 0644 {} \\;"
+  when:         not moodle_installed.stat.exists
   changed_when: moodle_cloned.changed
 
-- name: Create Moodle dataroot folder
+- name:         Create Moodle dataroot folder
   file:
-    path: "{{ moodle_dataroot_path }}"
-    state: directory
-    owner: "{{ moodle_dataroot_user }}"
-    group: "{{ moodle_dataroot_group }}"
-    mode: "{{ moodle_dataroot_permissions }}"
-  when: not moodle_dataroot_created.stat.exists
+    path:       "{{ moodle_dataroot_path }}"
+    state:      directory
+    owner:      "{{ moodle_dataroot_user }}"
+    group:      "{{ moodle_dataroot_group }}"
+    mode:       "{{ moodle_dataroot_permissions }}"
+  when:         not moodle_dataroot_created.stat.exists
 
-- name: Install Moodle
-  command: >
+- name:         Install Moodle
+  command:      >
     php install.php
     --chmod="{{ moodle_dataroot_permissions }}"
     --wwwroot="{{ moodle_wwwroot }}"
@@ -102,6 +102,6 @@
     --non-interactive
     --agree-license
   args:
-    chdir: "{{ moodle_root_path }}/admin/cli"
-  when: not moodle_installed.stat.exists
+    chdir:      "{{ moodle_root_path }}/admin/cli"
+  when:         not moodle_installed.stat.exists
   changed_when: moodle_cloned.changed
