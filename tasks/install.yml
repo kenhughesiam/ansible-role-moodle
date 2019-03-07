@@ -1,27 +1,5 @@
 ---
 
-- name:         Installing base packages for moodle
-  package:
-    name:       "{{ item }}"
-    state:      present
-  with_items:
-     - apache2
-     - mysql-client
-     - php5
-     - graphviz
-     - aspell
-     - php5-pspell
-     - php5-curl
-     - php5-gd
-     - php5-intl
-     - php5-mysql
-     - php5-xmlrpc
-     - php5-ldap
-     - git-core
-
-- name:         Starting apache on boot
-  service:      name=apache2 enabled=yes state=started
-
 - name:         Check if Moodle downloaded
   stat:
     path:       "{{ moodle_root_path }}/version.php"
